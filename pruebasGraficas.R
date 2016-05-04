@@ -40,12 +40,13 @@ AladinSat <- compaRe(media_aladin, media_sat, 'dif')
 
 ## 1.2. GRÁFICA
 
-library(RColorBrewer)
+
 
 ## a) primera opción (mejor para datos simétricos).
 
-
-div.pal <- brewer.pal(n=10, 'RdGy')
+## Una paleta con un número impar de valores para que el centro podamos asociarlo al cero
+div.pal <- brewer.pal(n=11, 'RdGy')
+## Reemplazamos el "blanco" de la paleta por un blanco puro.
 div.pal[6] <- "#FFFFFF"
 
 showPal <- function(pal, labs=pal, cex=0.6, ...){
@@ -56,10 +57,17 @@ div.pal <- rev(div.pal)
 
 divTheme <- rasterTheme(region=div.pal)
 
-levelplot(mask(PromesSat, boundaries_sp), margin=FALSE,, contour=TRUE, par.settings=divTheme)+layer(sp.lines(linea))
+## Sólo necesitamos los valores en terreno (filtramos el mar)
+promesSatMk <- mask(PromesSat, boundaries_sp)
+
+levelplot(promesSatMk,
+          margin=FALSE,
+          contour=TRUE,
+          par.settings=divTheme) +
+    layer(sp.lines(linea))
 
 ## b) segunda opción (mejor para datos asimétricos).
-
+## Ver explicación en https://github.com/oscarperpinan/spacetime-vis/blob/master/raster.R#L97
 rng <- range(PromesSat[])
 nInt <- 13
 
@@ -73,7 +81,7 @@ idxx <- findInterval(PromesSat[], breaks, rightmost.closed=TRUE)
 mids <-tapply(PromesSat[], idxx,median)
 mx <- max(abs(breaks))
 
-break2pal <- function(x,msx,pal){
+break2pal <- function(x,mx,pal){
     y <- 1/2*(x/mx+1)
     rgb(pal(y), maxColorValue=255)
 }
@@ -82,7 +90,11 @@ divRamp <-colorRamp(div.pal)
 pal <- break2pal(mids, mx, divRamp)
 showPal(pal, round(mids,1))
 
-levelplot(mask(PromesSat, boundaries_sp), margin=FALSE, contour=TRUE, par.settings=rasterTheme(region=pal))+layer(sp.lines(linea))
+levelplot(promesSatMk,
+          at = breaks,
+          margin=FALSE, contour=TRUE,
+          par.settings=rasterTheme(region=pal)) +
+    layer(sp.lines(linea))
 
 ##################
 
