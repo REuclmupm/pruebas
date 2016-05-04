@@ -4,6 +4,7 @@ library(maps)
 library(maptools)
 library(rgdal)
 library(ncdf4)
+library(reshape2)
 
 ##  DATOS
 
@@ -114,10 +115,12 @@ levelplot(mask(ab, boundaries_sp), margin=FALSE,, contour=TRUE, par.settings=ras
 ## 2. GRÁFICA VARIABILIDAD MENSUAL POR CLUSTER
 ###############################################################################3
 
-## cargo los datos y la máscara de clusters
-
+## cargo la máscara de clusters
 load("data/mascaraClustersSat.Rdata")
- 
+## Convierto la lista de Raster a un RasterLayer con mosaic
+ksB$fun <- min
+ksB <- do.call(mosaic, ksB)
+## Cargo datos de modelos 
 CV_mensual_aladinCor <- stack("data/CV_mensual_aladinCor.grd")
 CV_mensual_modeloCor <- stack("data/CV_mensual_modeloCor.grd")
 CV_mensual_sat <- stack("data/CV_mensual_sat.grd")
@@ -132,14 +135,8 @@ media_mensual240_aladinCor <- setZ(media_mensual240_aladinCor, idx)
 media_mensual240_modeloCor <- setZ(media_mensual240_modeloCor, idx)
 media_mensual240_sat <- setZ(media_mensual240_sat, idx)
 
-by_Clusters <- function(x, iCluster)
-    {
-        ## x es el raster que quiero analizar e iCluster el índice que me indica cual de los 6 clusters del raster
-        mask(x, ksB[[iCluster]])
-    }
 
-nClusters <- length(ksB)
-
+## Cálculo del coeficiente de variación mensual
 month <- function(x) as.numeric(format(x, '%m'))
 
 VariabilidadMensual <- function(x) {
@@ -150,72 +147,59 @@ VariabilidadMensual <- function(x) {
 }
 
 
-## Calculo la media de variabilidad por cluster
 
 ## 4.2.a variabilidad mensual PROMES
-
-cv_byCluster_mensual_modeloCor<- lapply(seq_len(nClusters),
-                      FUN=function(i)
-                          by_Clusters(VariabilidadMensual(media_mensual240_modeloCor),
-                                      i))
-
-
-mediacv_byCluster_mensual_modeloCor <- lapply(cv_byCluster_mensual_modeloCor,
-                                      FUN=function(i)
-                                                     cellStats(i,
-                                                               'mean'))
-
+cvMensualPROMES <- VariabilidadMensual(media_mensual240_modeloCor)
+## Coeficiente de variación por zonas
+cvClusterPROMES <- zonal(cvMensualPROMES, ksB)
+## El resultado es una matriz. Lo paso a data.frame...
+cvClusterPROMES <- as.data.frame(cvClusterPROMES)
+## En formato largo con reshape2::melt
+cvClusterPROMES <- melt(cvClusterPROMES,
+                     id = 'zone',
+                     variable.name = 'Month')
+cvClusterPROMES$Month <- as.numeric(gsub("X", "",
+                                         cvClusterPROMES$Month))
+cvClusterPROMES$Model <- 'PROMES'
 
 ## 4.2.b variabilidad mensual ALADIN
-
-cv_byCluster_mensual_aladin <- lapply(seq_len(nClusters),
-                      FUN=function(i)
-                          by_Clusters(VariabilidadMensual(media_mensual240_aladinCor),
-                                      i))
-
-
-
-mediacv_byCluster_mensual_aladin <- lapply(cv_byCluster_mensual_aladin,
-                                      FUN=function(i)
-                                                     cellStats(i,
-                                                               'mean'))
-
+cvMensualALADIN <- VariabilidadMensual(media_mensual240_aladinCor)
+cvClusterALADIN <- zonal(cvMensualALADIN, ksB)
+cvClusterALADIN <- as.data.frame(cvClusterALADIN)
+cvClusterALADIN <- melt(cvClusterALADIN,
+                     id = 'zone',
+                     variable.name = 'Month')
+cvClusterALADIN$Month <- as.numeric(gsub("X", "",
+                                         cvClusterALADIN$Month))
+cvClusterALADIN$Model <- 'ALADIN'
 
 ## 4.2.c variabilidad mensual CMSAF
-
-cv_byCluster_mensual_sat<- lapply(seq_len(nClusters),
-                      FUN=function(i)
-                          by_Clusters(VariabilidadMensual(media_mensual240_sat),
-                                      i))
-
-
-mediacv_byCluster_mensual_sat <- lapply(cv_byCluster_mensual_sat,
-                                      FUN=function(i)
-                                                     cellStats(i,
-                                                               'mean'))
-
+cvMensualSAT <- VariabilidadMensual(media_mensual240_sat)
+cvClusterSAT <- zonal(cvMensualSAT, ksB)
+cvClusterSAT <- as.data.frame(cvClusterSAT)
+cvClusterSAT <- melt(cvClusterSAT,
+                     id = 'zone',
+                     variable.name = 'Month')
+cvClusterSAT$Month <- as.numeric(gsub("X", "",
+                                         cvClusterSAT$Month))
+cvClusterSAT$Model <- 'CMSAF'
 
 ## GRÁFICA. Datos en data.frame
+CVModels <- rbind(cvClusterPROMES,
+                  cvClusterALADIN,
+                  cvClusterSAT)
+CVModels$zone <- factor(CVModels$zone)
 
+xyplot(value ~ Month | zone, data = CVModels,
+       group = Model,
+       type = 'b', 
+       par.settings = custom.theme(pch = 21),
+       auto.key = list(space = 'right',
+                       title = 'Model', cex.title = 1))
 
-a <- lapply(mediacv_byCluster_mensual_modeloCor, FUN=function(x) as.data.frame(x))
-b <- lapply(mediacv_byCluster_mensual_aladin, FUN=function(x) as.data.frame(x))
-c <- lapply(mediacv_byCluster_mensual_sat, FUN=function(x) as.data.frame(x))
-
-a2 <- unlist(a)
-b2 <- unlist(b)
-c2 <- unlist(c)
-
-clusters <- c(rep(1,12), rep(2,12),rep(3,12), rep(4,12),rep(5,12), rep(6,12))
-meses <- rep(1:12, 6)
-
-data <- data.frame(a2,b2,c2)
-data$month <- meses
-data$clusters <- clusters
-
-variabilidad <- c(a2,b2,c2)
-modelos <- c(rep("PROMES", 72), rep("ALADIN", 72), rep("SAT",72))
-
-datos <- data.frame(modelos,variabilidad, clusters, meses)
-
-xyplot(variabilidad~meses|clusters, data=datos, group=modelos, type='l', auto.key=TRUE)
+xyplot(value ~ Month | Model, data = CVModels,
+       group = zone,
+       type = 'b', layout = c(3, 1),
+       par.settings = custom.theme(pch = 21),
+       auto.key = list(space = 'right',
+                       title = 'Cluster', cex.title = 1))
