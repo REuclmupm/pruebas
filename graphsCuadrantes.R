@@ -144,6 +144,17 @@ xyplot(cv ~ radiation|factor(cluster), group = Model, data = M,
                        title = 'Model', cex.title = 1))
 #####################################################################
 
+densityplot(~ radiation|factor(cluster), groups = Model, data = M,
+            as.table = TRUE,
+            par.settings = myTheme,
+            auto.key = list(space = 'right',
+                            title = 'Model', cex.title = 1))
+
+densityplot(~ cv|factor(cluster), groups = Model, data = M,
+            as.table = TRUE,
+            par.settings = myTheme,
+            auto.key = list(space = 'right',
+                            title = 'Model', cex.title = 1))
 
 
 
