@@ -5,6 +5,7 @@ library(rasterVis)
 library(maps)
 library(mapdata)
 library(maptools)
+library(reshape2)
 
 ##############################################################
 ## 1. DATOS
@@ -160,6 +161,25 @@ xyplot(radiation~ cv|factor(cluster), group=Model, data=c,
        auto.key = list(space = 'right',
                        title = 'Model', cex.title = 1))
 
+## Para añadir las líneas de media de radiación y cv en la península
+
+load("data/boundaries.Rdata")
+
+mascara <- mask(media_sat, boundaries_sp)
+media <- cellStats(mascara, stat='mean')
+
+mascaracv <- mask(CV_anual_sat, boundaries_sp)
+mediacv <-  cellStats(mascaracv, stat='mean')
+
+xyplot(cv~radiation|factor(cluster), group=Model, data=c,
+       main='CV vs irradiation by cluster and model',
+       panel=function(...){
+         panel.abline(h=mediacv,v=media, col=4)
+         panel.xyplot(...)         
+       },
+       par.settings = custom.theme(pch = 21),
+       auto.key = list(space = 'right',
+                       title = 'Model', cex.title = 1))
 #####################################################################
 
 
