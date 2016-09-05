@@ -119,7 +119,7 @@ prodCluster <- rbind(prodCluster_SAT, prodCluster_PROMES, prodCluster_ALADIN)
 prodCluster$zone <- factor(prodCluster$zone)
 
 ## gráfico de barras
-
+ 
 barchart(value ~ type | zone, data = prodCluster,
          groups = Model,
          stack = FALSE,
@@ -153,6 +153,7 @@ dotplot(Model ~ value | zone, data = prodCluster,
 ## 1 panel por tipo de seguidor, agrupando por modelo
 dotplot(zone ~ value | type, data = prodCluster,
         groups = Model,
+        layout =c(3,1),
         par.settings = custom.theme(pch = 21),
         auto.key = list(space = 'top',
                         title = 'model', cex.title = 1),
