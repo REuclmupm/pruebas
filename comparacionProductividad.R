@@ -127,7 +127,7 @@ barchart(value~type | zone, data = prodCluster,
          auto.key = list(space = 'top',
              title = 'model', cex.title = 1),
          main='Yearly productivity by cluster and tracker',
-         ylab='Yearly productivity [kWh/m2]')
+         ylab='Yearly productivity [kWh/kWp]')
 
 ## xyplot gráfico
 
@@ -141,4 +141,4 @@ xyplot(value~zone | type, data = prodCluster,
            panel.grid()},
        layout=c(3,1),
          main='Yearly productivity by cluster and tracker',
-         ylab='Yearly productivity [kWh/m2]')
+         ylab='Yearly productivity [kWh/kWp]')
