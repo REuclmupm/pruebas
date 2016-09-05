@@ -120,14 +120,53 @@ prodCluster$zone <- factor(prodCluster$zone)
 
 ## gráfico de barras
 
-barchart(value~type | zone, data = prodCluster,
-         groups= Model,
-         stack=FALSE,
+barchart(value ~ type | zone, data = prodCluster,
+         groups = Model,
+         stack = FALSE,
          par.settings = custom.theme(pch = 21),
          auto.key = list(space = 'top',
              title = 'model', cex.title = 1),
          main='Yearly productivity by cluster and tracker',
-         ylab='Yearly productivity [kWh/m2]')
+         ylab='Yearly productivity [kWh/kWp]')
+
+## Mejor dotplot que barchart
+## https://www.perceptualedge.com/articles/b-eye/dot_plots.pdf
+## Atención: código sin probar con datos
+
+## 1 panel por zona (quizás muchos paneles), agrupando por modelo
+dotplot(type ~ value | zone, data = prodCluster,
+        groups = Model,
+        par.settings = custom.theme(pch = 21),
+        auto.key = list(space = 'top',
+                        title = 'model', cex.title = 1),
+        main='Yearly productivity by cluster and tracker',
+        ylab='Yearly productivity [kWh/kWp]')
+## 1 panel por zona, agrupando por tipo
+dotplot(Model ~ value | zone, data = prodCluster,
+         groups = type,
+         par.settings = custom.theme(pch = 21),
+         auto.key = list(space = 'top',
+             title = 'model', cex.title = 1),
+         main='Yearly productivity by cluster and tracker',
+         ylab='Yearly productivity [kWh/kWp]')
+
+## 1 panel por tipo de seguidor, agrupando por modelo
+dotplot(zone ~ value | type, data = prodCluster,
+        groups = Model,
+        par.settings = custom.theme(pch = 21),
+        auto.key = list(space = 'top',
+                        title = 'model', cex.title = 1),
+        main='Yearly productivity by cluster and tracker',
+        ylab='Yearly productivity [kWh/kWp]')
+
+## 1 panel por modelo, agrupando por tipo de seguidor
+dotplot(zone ~ value | Model, data = prodCluster,
+        groups = type,
+        par.settings = custom.theme(pch = 21),
+        auto.key = list(space = 'top',
+                        title = 'model', cex.title = 1),
+        main='Yearly productivity by cluster and tracker',
+        ylab='Yearly productivity [kWh/kWp]')
 
 ## xyplot gráfico
 
@@ -141,4 +180,4 @@ xyplot(value~zone | type, data = prodCluster,
            panel.grid()},
        layout=c(3,1),
          main='Yearly productivity by cluster and tracker',
-         ylab='Yearly productivity [kWh/m2]')
+         ylab='Yearly productivity [kWh/kWp]')
