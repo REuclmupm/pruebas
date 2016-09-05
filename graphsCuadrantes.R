@@ -37,12 +37,6 @@ r <- melt(radiacion_byCluster)
 
 ## calculo la variabilidad de la media anual:
 
-
-                          FUN=function(i)
-                              by_Clusters(CV_anual_sat
-                                         ,i)
-                          )
-
 variabilidad_byCluster <- mask(CV_anual_sat, ksB)
 variabilidad_byCluster <- as.data.frame(variabilidad_byCluster)
 names(variabilidad_byCluster) <- 1:20
@@ -113,7 +107,7 @@ myTheme <- custom.theme.2(pch = 21, cex = 0.7)
 myTheme$strip.background$col <- 'transparent'
 myTheme$strip.shingle$col <- 'transparent'
 
-xyplot(radiation ~ cv|factor(cluster), group = Model, data = M,
+xyplot(cv ~ radiation|factor(cluster), group = Model, data = M,
        main='CV vs irradiation by cluster and model',
        par.settings = myTheme,
        alpha = 0.6,
