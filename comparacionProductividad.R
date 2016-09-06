@@ -137,28 +137,31 @@ barchart(value ~ type | zone, data = prodCluster,
 dotplot(type ~ value | zone, data = prodCluster,
         groups = Model,
         par.settings = custom.theme(pch = 21),
+        as.table = TRUE, type = 'b',
         auto.key = list(space = 'top',
-                        title = 'model', cex.title = 1),
+                        title = 'Model', cex.title = 1),
         main='Yearly productivity by cluster and tracker',
-        ylab='Yearly productivity [kWh/kWp]')
+        xlab='Yearly productivity [kWh/kWp]')
+
 ## 1 panel por zona, agrupando por tipo
 dotplot(Model ~ value | zone, data = prodCluster,
-         groups = type,
-         par.settings = custom.theme(pch = 21),
-         auto.key = list(space = 'top',
-             title = 'model', cex.title = 1),
-         main='Yearly productivity by cluster and tracker',
-         ylab='Yearly productivity [kWh/kWp]')
+        groups = type,
+        par.settings = custom.theme(pch = 21),
+        as.table = TRUE, type = 'b',
+        auto.key = list(space = 'top',
+                        title = 'Model', cex.title = 1),
+        main='Yearly productivity by cluster and tracker',
+        xlab='Yearly productivity [kWh/kWp]')
 
 ## 1 panel por tipo de seguidor, agrupando por modelo
 dotplot(zone ~ value | type, data = prodCluster,
         groups = Model,
-        layout =c(3,1),
+        layout = c(3,1), type = 'b',
         par.settings = custom.theme(pch = 21),
         auto.key = list(space = 'top',
-                        title = 'model', cex.title = 1),
+                        title = 'Model', cex.title = 1),
         main='Yearly productivity by cluster and tracker',
-        ylab='Yearly productivity [kWh/kWp]')
+        xlab='Yearly productivity [kWh/kWp]')
 
 ## 1 panel por modelo, agrupando por tipo de seguidor
 dotplot(zone ~ value | Model, data = prodCluster,
@@ -167,7 +170,7 @@ dotplot(zone ~ value | Model, data = prodCluster,
         auto.key = list(space = 'top',
                         title = 'model', cex.title = 1),
         main='Yearly productivity by cluster and tracker',
-        ylab='Yearly productivity [kWh/kWp]')
+        xlab='Yearly productivity [kWh/kWp]')
 
 ## xyplot gráfico
 
