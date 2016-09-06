@@ -163,8 +163,29 @@ dotplot(zone ~ value | type, data = prodCluster,
         main='Yearly productivity by cluster and tracker',
         xlab='Yearly productivity [kWh/kWp]')
 
+## 1 panel por tipo de seguidor, agrupando por modelo.
+## **ORDENA las zonas por valor medio** 
+dotplot(reorder(zone, value) ~ value | type, data = prodCluster,
+        groups = Model,
+        layout = c(3,1), 
+        par.settings = custom.theme(pch = 21),
+        auto.key = list(space = 'top',
+                        title = 'Model', cex.title = 1),
+        main='Yearly productivity by cluster and tracker',
+        xlab='Yearly productivity [kWh/kWp]')
+
 ## 1 panel por modelo, agrupando por tipo de seguidor
 dotplot(zone ~ value | Model, data = prodCluster,
+        groups = type,
+        par.settings = custom.theme(pch = 21),
+        auto.key = list(space = 'top',
+                        title = 'model', cex.title = 1),
+        main='Yearly productivity by cluster and tracker',
+        xlab='Yearly productivity [kWh/kWp]')
+
+## 1 panel por modelo, agrupando por tipo de seguidor
+## *ORDENA zonas por valor medio*
+dotplot(reorder(zone, value) ~ value | Model, data = prodCluster,
         groups = type,
         par.settings = custom.theme(pch = 21),
         auto.key = list(space = 'top',
