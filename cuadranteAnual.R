@@ -6,6 +6,8 @@ load("mediaCVanual_byCluster_resolucion.Rdata")
 anual <- cbind(media_byCluster, mediaCV_byCluster[,2])
 colnames(anual) <- c("zone", "mean", "cv")
 
+## Las medias están mal, tengo qhe hacer el cálculo con toda la peninsula
+
 xyplot(cv ~ mean, group = zone, data = anual,
        main = 'CV vs irradiation by cluster',
        panel = function(...){
