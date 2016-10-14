@@ -2,20 +2,39 @@
 
 load("mediaAnual_byCluster_resolucion.Rdata")
 load("mediaCVanual_byCluster_resolucion.Rdata")
+load("mediaCVanual_IP.Rdata")
+load("mediaAnual_radiacionIP.Rdata")
 
 anual <- cbind(media_byCluster, mediaCV_byCluster[,2])
 colnames(anual) <- c("zone", "mean", "cv")
+anual <- as.data.frame(anual)
 
 ## Las medias están mal, tengo qhe hacer el cálculo con toda la peninsula
 
-xyplot(cv ~ mean, group = zone, data = anual,
+myTheme <- custom.theme.2(pch = 21, cex = 1.3)
+myTheme$strip.background$col <- 'transparent'
+myTheme$strip.shingle$col <- 'transparent'
+
+
+xyplot(cv ~ mean, group = as.factor(zone), data = anual,
        main = 'CV vs irradiation by cluster',
+       scales=list(x=list(cex=1.5), y=list(cex=1.5)),
+       xlab=list(label='irradiancia diaria media anual [W/m²]',cex=1.3),
+       ylab=list(label='CV', cex=1.3),
        panel = function(...){
-         panel.abline(h = mean(anual[,3]), v = mean(anual[,2]), col=4)
+         panel.abline(h = cV_media, v = media_radiacion, col=4)
+         panel.text(x=anual[,2]+1.5, y= anual[,3]-0.06,labels=anual[,1])
          panel.xyplot(...)         
        },
        par.settings = myTheme,
-       alpha = 0.7,
+       alpha = 1,
        as.table = TRUE,
-       auto.key = list(space = 'right',
-title = 'Model', cex.title = 1))
+       #auto.key = list(space = 'right',
+        #   title = 'cluster', cex.title = 1))
+)
+
+
+
+
+panel.text(centroids[, 2:3],
+labels = centroids[, 1])
