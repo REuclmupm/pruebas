@@ -35,6 +35,3 @@ xyplot(cv ~ mean, group = as.factor(zone), data = anual,
 
 
 
-
-panel.text(centroids[, 2:3],
-labels = centroids[, 1])
