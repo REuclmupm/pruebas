@@ -14,12 +14,12 @@ anual <- as.data.frame(anual)
 
 ## Las medias están mal, tengo qhe hacer el cálculo con toda la peninsula
 
-myTheme <- custom.theme.2(pch = 21, cex = 1.3)
+myTheme <- custom.theme(pch = 19, cex = 1.3)
 myTheme$strip.background$col <- 'transparent'
 myTheme$strip.shingle$col <- 'transparent'
 
 
-xyplot(cv ~ mean, group = as.factor(zone), data = anual,
+xyplot(cv ~ mean, data = anual,
        main = 'CV vs irradiation by cluster',
        scales=list(x=list(cex=1.5), y=list(cex=1.5)),
        xlab=list(label = expression(paste(G[da], (Wh/m^2))), cex=1.3),
