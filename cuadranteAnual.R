@@ -35,3 +35,24 @@ xyplot(cv ~ mean, data = anual,
 
 
 
+## MAPA
+media_byCluster_sat <- as.data.frame(media_byCluster)
+mediaCV_byCluster_sat <- as.data.frame(mediaCV_byCluster)
+media_byCluster_sat$cv <- mediaCV_byCluster_sat[,2]
+media_byCluster_sat$Model <- 'SAT'
+
+satelite <- media_byCluster_sat
+
+## Definición de cluster
+load("data/mascaraClusters19enTierra_resolucion.Rdata")
+ksB$fun <- min
+ksB <- do.call(mosaic, ksB)
+
+## Asigno valor de media y cv a cada cluster para representación
+ksMean <- subs(ksB, satelite, which = 'mean')
+ksCV <- subs(ksB, satelite, which = 'cv')
+ksB <- stack(ksB, ksMean, ksCV)
+names(ksB) <- c('zone', 'mean', 'cv')
+
+levelplot(ksB, layer = 'mean')
+levelplot(ksB, layer = 'cv')
