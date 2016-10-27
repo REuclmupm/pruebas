@@ -24,17 +24,14 @@ xyplot(cv ~ mean, group = as.factor(zone), data = anual,
        scales=list(x=list(cex=1.5), y=list(cex=1.5)),
        xlab=list(label = expression(paste(G[da], (Wh/m^2))), cex=1.3),
        ylab=list(label='CV', cex=1.3),
-       panel = function(...){
-         panel.abline(h = cV_media, v = media_radiacion, col=4)
-         panel.text(x=anual[,2]+1.5, y= anual[,3]-0.06,labels=anual[,1])
-         panel.xyplot(...)         
-       },
-       par.settings = myTheme,
-       alpha = 1,
-       as.table = TRUE
-       #auto.key = list(space = 'right',
-        #   title = 'cluster', cex.title = 1))
-)
+       par.settings = myTheme
+       ) +
+    layer({
+        panel.abline(h = cV_media, v = media_radiacion, col=4)
+        panel.text(x = x + 1.5, y = y - 0.06,
+                   labels = zone)
+    }, data = anual)
+
 
 
 
