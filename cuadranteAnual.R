@@ -22,7 +22,7 @@ myTheme$strip.shingle$col <- 'transparent'
 xyplot(cv ~ mean, group = as.factor(zone), data = anual,
        main = 'CV vs irradiation by cluster',
        scales=list(x=list(cex=1.5), y=list(cex=1.5)),
-       xlab=list(label='irradiancia diaria media anual [W/m²]',cex=1.3),
+       xlab=list(label = expression(paste(G[da], (Wh/m^2))), cex=1.3),
        ylab=list(label='CV', cex=1.3),
        panel = function(...){
          panel.abline(h = cV_media, v = media_radiacion, col=4)
@@ -31,7 +31,7 @@ xyplot(cv ~ mean, group = as.factor(zone), data = anual,
        },
        par.settings = myTheme,
        alpha = 1,
-       as.table = TRUE,
+       as.table = TRUE
        #auto.key = list(space = 'right',
         #   title = 'cluster', cex.title = 1))
 )
