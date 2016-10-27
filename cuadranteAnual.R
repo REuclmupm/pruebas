@@ -1,3 +1,6 @@
+library(raster)
+library(lattice)
+library(rasterVis)
 ## ESta gráfica representa la media anual de todo el periodo de radiación y de CV interanual.
 
 load("mediaAnual_byCluster_resolucion.Rdata")
